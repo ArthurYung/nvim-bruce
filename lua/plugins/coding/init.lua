@@ -42,6 +42,12 @@ return {
       },
     },
   },
+  {
+    'zbirenbaum/copilot-cmp',
+    config = function()
+      require('copilot_cmp').setup()
+    end,
+  },
   -- auto completion
   {
     'hrsh7th/nvim-cmp',
@@ -54,22 +60,6 @@ return {
       'saadparwaiz1/cmp_luasnip',
       -- lspkind
       'onsails/lspkind-nvim',
-      {
-        'zbirenbaum/copilot-cmp',
-        dependencies = 'copilot.lua',
-        opts = {},
-        config = function(_, opts)
-          local copilot_cmp = require('copilot_cmp')
-          copilot_cmp.setup(opts)
-          -- attach cmp source whenever copilot attaches
-          -- fixes lazy-loading issues with the copilot cmp source
-          vim.lsp.on_attach(function(client)
-            if client.name == 'copilot' then
-              copilot_cmp._on_insert_enter({})
-            end
-          end)
-        end,
-      },
     },
     opts = function()
       local cmp = require('cmp')
@@ -94,12 +84,12 @@ return {
           ['<CR>'] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
         }),
         sources = cmp.config.sources({
-          { name = 'nvim_lsp', max_item_count = 20 },
           {
             name = 'copilot',
             group_index = 1,
             priority = 100,
           },
+          { name = 'nvim_lsp', max_item_count = 20 },
           { name = 'luasnip' },
           { name = 'buffer' },
           { name = 'path' },
@@ -195,14 +185,6 @@ return {
   -- better cursors
   {
     'mg979/vim-visual-multi',
-  },
-
-  -- copilot
-  {
-    'github/copilot.vim',
-    keys = {
-      { '<leader>cg', '<cmd>Copilot<cr>', desc = 'Copilot' },
-    },
   },
 
   -- splitjoin

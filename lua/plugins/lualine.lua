@@ -7,12 +7,18 @@ return {
     },
     config = function()
       local icons = require('config').icons
-      local colorscheme = require('tokyonight.colors')
+      local get_color = function(name)
+        local hl = vim.api.nvim_get_hl and vim.api.nvim_get_hl(0, { name = name })
+          or vim.api.nvim_get_hl_by_name(name, true)
+        ---@diagnostic disable-next-line: undefined-field
+        local fg = hl and (hl.fg or hl.foreground)
+        return fg and { fg = string.format('#%06x', fg) } or nil
+      end
       local colors = {
-        [''] = colorscheme.blue1,
-        ['Normal'] = colorscheme.blue1,
-        ['Warning'] = colorscheme.error,
-        ['InProgress'] = colorscheme.warn,
+        [''] = get_color('Special'),
+        ['Normal'] = get_color('Special'),
+        ['Warning'] = get_color('DiagnosticError'),
+        ['InProgress'] = get_color('DiagnosticWarn'),
       }
       local function fg(name)
         return function()

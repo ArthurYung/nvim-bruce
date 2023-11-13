@@ -6,6 +6,7 @@ return {
     branch = 'v2.x',
     keys = {
       { '<leader>e', '<cmd>Neotree toggle<cr>', desc = 'NeoTree' },
+      { '<leader>fe', '<cmd>Neotree focus<cr>', desc = 'NeoTree focus' },
     },
     dependencies = {
       'nvim-lua/plenary.nvim',
@@ -90,7 +91,7 @@ return {
           },
           window = {
             mappings = {
-              ['/'] = 'noop',
+              -- ['/'] = 'noop',
               ['Y'] = 'copy_selector',
             },
           },
