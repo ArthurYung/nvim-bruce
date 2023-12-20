@@ -137,10 +137,24 @@ return {
       end)
 
       -- diagnostics
+      local signs = {
+        text = {},
+        numhl = {},
+        texthl = {},
+      }
+
       for name, icon in pairs(require('config').icons.diagnostics) do
+        -- 10版本以上为大写
+        local diagnosticName = string.upper(name)
+        signs.text[diagnosticName] = icon
+        signs.numhl[diagnosticName] = ''
+        signs.texthl[diagnosticName] = 'LspDiagnosticsSign' .. name
+
         name = 'DiagnosticSign' .. name
         vim.fn.sign_define(name, { text = icon, texthl = name, numhl = '' })
       end
+
+      opts.diagnostics.signs = signs
       vim.diagnostic.config(opts.diagnostics)
 
       local servers = opts.servers
