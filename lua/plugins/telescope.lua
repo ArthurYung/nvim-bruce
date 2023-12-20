@@ -70,6 +70,7 @@ return {
         },
         prompt_prefix = '   ',
         selection_caret = ' ',
+        selection_strategy = 'reset',
         vimgrep_arguments = {
           'rg',
           '--color=never',
