@@ -7,6 +7,7 @@ return {
     cmd = 'Telescope',
     version = false, -- telescope did only one release, so use HEAD for now
     dependencies = {
+      'nvim-telescope/telescope-ui-select.nvim',
       'kdheepak/lazygit.nvim',
     },
     keys = {
@@ -118,8 +119,16 @@ return {
       },
     },
     config = function(_, opts)
+      opts.extensions = {
+        ['ui-select'] = {
+          require('telescope.themes').get_dropdown({
+            -- even more opts
+          }),
+        },
+      }
       require('telescope').setup(opts)
       require('telescope').load_extension('lazygit')
+      require('telescope').load_extension('ui-select')
     end,
   },
 }
