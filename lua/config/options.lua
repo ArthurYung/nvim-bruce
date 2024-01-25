@@ -5,6 +5,7 @@ vim.g.mapleader = ','
 
 local opt = vim.opt
 
+opt.shell = "zsh"
 opt.autowrite = true -- Enable auto write
 -- opt.clipboard = 'unnamedplus' -- Sync with system clipboard
 opt.clipboard = 'unnamed,unnamedplus' -- Sync with system clipboard
