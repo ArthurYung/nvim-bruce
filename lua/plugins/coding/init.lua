@@ -50,11 +50,16 @@ return {
   },
   {
     'CopilotC-Nvim/CopilotChat.nvim',
+    branch = 'main',
+    dependencies = {
+      { 'zbirenbaum/copilot.lua' }, -- or github/copilot.vim
+      { 'nvim-lua/plenary.nvim' }, -- for curl, log wrapper
+    },
     opts = {
       show_help = 'yes', -- Show help text for CopilotChatInPlace, default: yes
       debug = false, -- Enable or disable debug mode, the log file will be in ~/.local/state/nvim/CopilotChat.nvim.log
       disable_extra_info = 'no', -- Disable extra information (e.g: system prompt) in the response.
-      language = 'English', -- Copilot answer language settings when using default prompts. Default language is English.
+      language = 'Chinese', -- Copilot answer language settings when using default prompts. Default language is English.
       -- proxy = "socks5://127.0.0.1:3000", -- Proxies requests via https or socks.
       -- temperature = 0.1,
     },
@@ -72,6 +77,11 @@ return {
       {
         '<leader>ccn',
         '<cmd>CopilotChat 给这个变量命名<cr>',
+        desc = 'CopilotChat - Variable naming',
+      },
+      {
+        '<leader>ccd',
+        '<cmd>CopilotChat 给这段代码补全注释<cr>',
         desc = 'CopilotChat - Variable naming',
       },
       {

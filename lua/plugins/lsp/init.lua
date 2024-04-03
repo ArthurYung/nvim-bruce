@@ -57,11 +57,11 @@ return {
         cssls = {},
         html = {},
         lua_ls = {},
-        -- pyright = {},
+        pyright = {},
         bashls = {},
         yamlls = {},
         rust_analyzer = {},
-        codelldb = {},
+        -- codelldb = {},
         gopls = {},
       },
 
@@ -260,6 +260,7 @@ return {
       ensure_installed = {
         'stylua',
         'shellcheck',
+        'pyright',
         'shfmt',
         'flake8',
         'codelldb',
