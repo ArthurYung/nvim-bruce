@@ -36,7 +36,7 @@ function M.format()
       return client.name ~= 'null-ls'
     end,
   }, {
-    timeout_ms = nil,
+    timeout_ms = 5000,
     formatting_options = nil,
   }))
 end

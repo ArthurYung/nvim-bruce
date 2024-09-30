@@ -213,19 +213,6 @@ return {
   },
 
   {
-    'kkoomen/vim-doge',
-    build = function(plugin)
-      if vim.fn.system('arch') == 'arm64' then
-        os.execute('cd ' .. plugin.dir .. '&& npm i --no-save && npm run build:binary:unix')
-      else
-        vim.cmd(':call doge#install()')
-      end
-    end,
-    config = function()
-      vim.g.doge_mapping = '<Leader>d'
-    end,
-  },
-  {
     'danymat/neogen',
     dependencies = 'nvim-treesitter/nvim-treesitter',
     config = true,

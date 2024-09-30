@@ -1,5 +1,7 @@
 local Util = require('lazy.core.util')
 
+local consol = ''
+
 local M = {}
 
 M.root_patterns = { '.git', 'lua' }
