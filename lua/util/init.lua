@@ -1,8 +1,42 @@
 local Util = require('lazy.core.util')
 
-local consol = ''
-
+---@class editor.util: LazyUtilCore
+---@field format editor.util.format
+---@field lsp editor.util.lsp
 local M = {}
+
+---@type table<string, string|string[]>
+local deprecated = {
+  -- get_clients = "lsp",
+  -- on_attach = 'lsp',
+  -- on_rename = "lsp",
+  -- root_patterns = { "root", "patterns" },
+  -- get_root = { "root", "get" },
+  -- float_term = { "terminal", "open" },
+  -- toggle_diagnostics = { "toggle", "diagnostics" },
+  -- toggle_number = { "toggle", "number" },
+  fg = 'ui',
+}
+
+setmetatable(M, {
+  __index = function(t, k)
+    if Util[k] then
+      return Util[k]
+    end
+    local dep = deprecated[k]
+    if dep then
+      local mod = type(dep) == 'table' and dep[1] or dep
+      local key = type(dep) == 'table' and dep[2] or k
+      M.deprecate([[require("util").]] .. k, [[require("util").]] .. mod .. '.' .. key)
+      ---@diagnostic disable-next-line: no-unknown
+      t[mod] = require('util.' .. mod) -- load here to prevent loops
+      return t[mod][key]
+    end
+    ---@diagnostic disable-next-line: no-unknown
+    t[k] = require('util.' .. k)
+    return t[k]
+  end,
+})
 
 M.root_patterns = { '.git', 'lua' }
 
@@ -197,6 +231,16 @@ M.dump = function(o)
   end
 end
 
+function M.merge_tables(...)
+  local result = {}
+  for _, t in ipairs({ ... }) do
+    for _, v in pairs(t) do
+      table.insert(result, v)
+    end
+  end
+  return result
+end
+
 -- toggle all treesitter modules, if is buffter use TSBufToggle, else use TSToggle (global)
 function M.toggle_treesitter_modules()
   if vim.fn.exists(':TSToggle') == 0 or vim.fn.exists(':TSBufToggle') == 0 then
@@ -222,6 +266,25 @@ function M.toggle_treesitter_modules()
     else
       vim.cmd((':TSBufToggle %s'):format(module))
     end
+  end
+end
+
+---@param fn fun()
+function M.on_very_lazy(fn)
+  vim.api.nvim_create_autocmd('User', {
+    pattern = 'VeryLazy',
+    callback = function()
+      fn()
+    end,
+  })
+end
+
+--- Override the default title for notifications.
+for _, level in ipairs({ 'info', 'warn', 'error' }) do
+  M[level] = function(msg, opts)
+    opts = opts or {}
+    opts.title = opts.title or 'Editor'
+    return Util[level](msg, opts)
   end
 end
 

@@ -1,4 +1,3 @@
-local Util = require('util')
 -- This file is automatically loaded by lazyvim.config.init
 local copilot_panel = require('copilot.panel')
 
@@ -14,7 +13,7 @@ local function map(mode, lhs, rhs, opts)
 end
 
 -- buffers
-if Util.has('bufferline.nvim') then
+if Editor.has('bufferline.nvim') then
   map('n', '<S-h>', '<cmd>BufferLineCyclePrev<cr>', { desc = 'Prev buffer' })
   map('n', '<S-l>', '<cmd>BufferLineCycleNext<cr>', { desc = 'Next buffer' })
   map('n', '[b', '<cmd>BufferLineCyclePrev<cr>', { desc = 'Prev buffer' })
@@ -38,35 +37,29 @@ map('n', '<leader>tn', '<cmd>:tabnew<CR>', { desc = 'New tab' })
 map('n', '<leader>tm', '<cmd>:tabm<Space>', { desc = 'Move tab' })
 map('n', '<leader>td', '<cmd>:tabclose<CR>', { desc = 'Close tab' })
 
+-- diagnostic
+local diagnostic_goto = function(next, severity)
+  local go = next and vim.diagnostic.goto_next or vim.diagnostic.goto_prev
+  severity = severity and vim.diagnostic.severity[severity] or nil
+  return function()
+    go({ severity = severity })
+  end
+end
+
 -- toggle options
-map('n', '<leader>uf', require('plugins.lsp.format').toggle, { desc = 'Toggle format on Save' })
-map('n', '<leader>us', function()
-  Util.toggle('spell')
-end, { desc = 'Toggle Spelling' })
-map('n', '<leader>uw', function()
-  Util.toggle('wrap')
-end, { desc = 'Toggle Word Wrap' })
-map('n', '<leader>ul', function()
-  Util.toggle('relativenumber', true)
-  Util.toggle('number')
-end, { desc = 'Toggle Line Numbers' })
-map('n', '<leader>ud', Util.toggle_diagnostics, { desc = 'Toggle Diagnostics' })
+map("n", "<leader>uf", Editor.format.toggle, { desc = "Toggle format on Save" })
+map("n", "<leader>us", function() Editor.toggle("spell") end, { desc = "Toggle Spelling" })
+map("n", "<leader>uw", function() Editor.toggle("wrap") end, { desc = "Toggle Word Wrap" })
+map("n", "<leader>ul", function() Editor.toggle("relativenumber", true) Editor.toggle("number") end, { desc = "Toggle Line Numbers" })
+map("n", "<leader>ud", Editor.toggle_diagnostics, { desc = "Toggle Diagnostics" })
 local conceallevel = vim.o.conceallevel > 0 and vim.o.conceallevel or 3
-map('n', '<leader>uc', function()
-  Util.toggle('conceallevel', false, { 0, conceallevel })
-end, { desc = 'Toggle Conceal' })
+map("n", "<leader>uc", function() Editor.toggle("conceallevel", false, {0, conceallevel}) end, { desc = "Toggle Conceal" })
 
 map({ 'i', 'x', 'n', 's' }, '<C-s>', '<cmd>w<cr><esc>', { desc = 'Save file' })
 map('n', '<leader>cd', vim.diagnostic.open_float, { desc = 'Line Diagnostics' })
-map('n', ';g', function()
-  copilot_panel.open({ position = 'right', ratio = 0.4 })
-end, { desc = 'Open Copilot Panel' })
-map('n', ';a', function()
-  copilot_panel.accept()
-end, { desc = 'Copilot Panel Accept' })
-map('n', ';j', function()
-  copilot_panel.jump_prev()
-end, { desc = 'Copilot Panel Jump Prev' })
-map('n', ';k', function()
-  copilot_panel.jump_next()
-end, { desc = 'Copilot Panel Jump Next' })
+map('n', ']d', diagnostic_goto(true), { desc = 'Next Diagnostic' })
+map('n', '[d', diagnostic_goto(false), { desc = 'Prev Diagnostic' })
+map('n', ']e', diagnostic_goto(true, 'ERROR'), { desc = 'Next Error' })
+map('n', '[e', diagnostic_goto(false, 'ERROR'), { desc = 'Prev Error' })
+map('n', ']w', diagnostic_goto(true, 'WARN'), { desc = 'Next Warning' })
+map('n', '[w', diagnostic_goto(false, 'WARN'), { desc = 'Prev Warning' })
