@@ -28,67 +28,72 @@ return {
       { '<s-tab>', function() require('luasnip').jump( -1) end, mode = { 'i', 's' } },
     },
   },
-  -- {
-  --   'yetone/avante.nvim',
-  --   event = 'VeryLazy',
-  --   lazy = false,
-  --   version = false, -- set this if you want to always pull the latest change
-  --   opts = {
-  --     -- add any opts here
-  --     provider = 'openai', -- Recommend using Claude
-  --     auto_suggestions_provider = 'openai', -- Since auto-suggestions are a high-frequency operation and therefore expensive, it is recommended to specify an inexpensive provider or even a free provider: copilot
-  --     openai = {
-  --       endpoint = 'https://api.openai.com/v1',
-  --       model = 'gpt-3.5-turbo',
-  --       temperature = 0,
-  --       max_tokens = 4096,
-  --     },
-  --     behaviour = {
-  --       auto_suggestions = false, -- Experimental stage
-  --       auto_set_highlight_group = true,
-  --       auto_set_keymaps = true,
-  --       auto_apply_diff_after_generation = false,
-  --       support_paste_from_clipboard = false,
-  --     },
-  --   },
-  --   -- if you want to build from source then do `make BUILD_FROM_SOURCE=true`
-  --   build = 'make',
-  --   -- build = "powershell -ExecutionPolicy Bypass -File Build.ps1 -BuildFromSource false" -- for windows
-  --   dependencies = {
-  --     'nvim-treesitter/nvim-treesitter',
-  --     'stevearc/dressing.nvim',
-  --     'nvim-lua/plenary.nvim',
-  --     'MunifTanjim/nui.nvim',
-  --     --- The below dependencies are optional,
-  --     'nvim-tree/nvim-web-devicons', -- or echasnovski/mini.icons
-  --     'zbirenbaum/copilot.lua', -- for providers='copilot'
-  --     {
-  --       -- support for image pasting
-  --       'HakonHarnes/img-clip.nvim',
-  --       event = 'VeryLazy',
-  --       opts = {
-  --         -- recommended settings
-  --         default = {
-  --           embed_image_as_base64 = false,
-  --           prompt_for_file_name = false,
-  --           drag_and_drop = {
-  --             insert_mode = true,
-  --           },
-  --           -- required for Windows users
-  --           use_absolute_path = true,
-  --         },
-  --       },
-  --     },
-  --     {
-  --       -- Make sure to set this up properly if you have lazy=true
-  --       'MeanderingProgrammer/render-markdown.nvim',
-  --       opts = {
-  --         file_types = { 'markdown', 'Avante' },
-  --       },
-  --       ft = { 'markdown', 'Avante' },
-  --     },
-  --   },
-  -- },
+  {
+    'yetone/avante.nvim',
+    event = 'VeryLazy',
+    lazy = false,
+    version = false, -- set this if you want to always pull the latest change
+    opts = {
+      provider = 'openai',
+      auto_suggestions_provider = 'openai', -- Since auto-suggestions are a high-frequency operation and therefore expensive, it is recommended to specify an inexpensive provider or even a free provider: copilot
+      openai = {
+        endpoint = 'https://api.deepseek.com/v1',
+        model = 'deepseek-chat',
+        timeout = 30000, -- Timeout in milliseconds
+        temperature = 0,
+        max_tokens = 4096,
+        -- ['local'] = false,
+        api_key_name = 'DEEPSEEK_API_KEY',
+      },
+      --- @class AvanteConflictUserConfig
+      diff = {
+        autojump = true,
+        ---@type string | fun(): any
+        list_opener = 'copen',
+        --- Override the 'timeoutlen' setting while hovering over a diff (see :help timeoutlen).
+        --- Helps to avoid entering operator-pending mode with diff mappings starting with `c`.
+        --- Disable by setting to -1.
+        override_timeoutlen = 500,
+      },
+    },
+    -- if you want to build from source then do `make BUILD_FROM_SOURCE=true`
+    build = 'make BUILD_FROM_SOURCE=true',
+    -- build = "powershell -ExecutionPolicy Bypass -File Build.ps1 -BuildFromSource false" -- for windows
+    dependencies = {
+      'nvim-treesitter/nvim-treesitter',
+      'stevearc/dressing.nvim',
+      'nvim-lua/plenary.nvim',
+      'MunifTanjim/nui.nvim',
+      --- The below dependencies are optional,
+      'nvim-tree/nvim-web-devicons', -- or echasnovski/mini.icons
+      'zbirenbaum/copilot.lua', -- for providers='copilot'
+      {
+        -- support for image pasting
+        'HakonHarnes/img-clip.nvim',
+        event = 'VeryLazy',
+        opts = {
+          -- recommended settings
+          default = {
+            embed_image_as_base64 = false,
+            prompt_for_file_name = false,
+            drag_and_drop = {
+              insert_mode = true,
+            },
+            -- required for Windows users
+            use_absolute_path = true,
+          },
+        },
+      },
+      {
+        -- Make sure to set this up properly if you have lazy=true
+        'MeanderingProgrammer/render-markdown.nvim',
+        opts = {
+          file_types = { 'markdown', 'Avante' },
+        },
+        ft = { 'markdown', 'Avante' },
+      },
+    },
+  },
   -- copilot
   {
     'zbirenbaum/copilot.lua',
@@ -109,65 +114,65 @@ return {
       require('copilot_cmp').setup()
     end,
   },
-  {
-    'CopilotC-Nvim/CopilotChat.nvim',
-    branch = 'main',
-    dependencies = {
-      { 'zbirenbaum/copilot.lua' }, -- or github/copilot.vim
-      { 'nvim-lua/plenary.nvim' }, -- for curl, log wrapper
-    },
-    opts = {
-      show_help = 'yes', -- Show help text for CopilotChatInPlace, default: yes
-      debug = false, -- Enable or disable debug mode, the log file will be in ~/.local/state/nvim/CopilotChat.nvim.log
-      disable_extra_info = 'no', -- Disable extra information (e.g: system prompt) in the response.
-      language = 'Chinese', -- Copilot answer language settings when using default prompts. Default language is English.
-      -- proxy = "socks5://127.0.0.1:3000", -- Proxies requests via https or socks.
-      -- temperature = 0.1,
-    },
-    build = function()
-      vim.cmd('UpdateRemotePlugins')
-      vim.notify("Please update the remote plugins by running ':UpdateRemotePlugins', then restart Neovim.")
-    end,
-    event = 'VeryLazy',
-    keys = {
-      { '<leader>ccc', ':CopilotChat ', desc = 'CopilotChat - Chat start' },
-      { '<leader>ccm', '<cmd>CopilotChat 是什么意思<cr>', desc = 'CopilotChat - code experimental' },
-      { '<leader>ccb', ':CopilotChatBuffer ', desc = 'CopilotChat - Chat with current buffer' },
-      { '<leader>cce', '<cmd>CopilotChatExplain<cr>', desc = 'CopilotChat - Explain code' },
-      { '<leader>cct', '<cmd>CopilotChatTests<cr>', desc = 'CopilotChat - Generate tests' },
-      {
-        '<leader>ccn',
-        '<cmd>CopilotChat 给这个变量命名<cr>',
-        desc = 'CopilotChat - Variable naming',
-      },
-      {
-        '<leader>ccd',
-        '<cmd>CopilotChat 给这段代码补全注释<cr>',
-        desc = 'CopilotChat - Variable naming',
-      },
-      {
-        '<leader>ccf',
-        '<cmd>CopilotChat 给这个方法命名<cr>',
-        desc = 'CopilotChat - Function naming',
-      },
-      {
-        '<leader>ccT',
-        '<cmd>CopilotChatVsplitToggle<cr>',
-        desc = 'CopilotChat - Toggle Vsplit', -- Toggle vertical split
-      },
-      {
-        '<leader>ccx',
-        ':CopilotChatInPlace<cr>',
-        mode = 'x',
-        desc = 'CopilotChat - Run in-place code',
-      },
-      {
-        '<leader>ccr',
-        '<cmd>CopilotChatReset<cr>', -- Reset chat history and clear buffer.
-        desc = 'CopilotChat - Reset chat history and clear buffer',
-      },
-    },
-  },
+  -- {
+  --   'CopilotC-Nvim/CopilotChat.nvim',
+  --   branch = 'main',
+  --   dependencies = {
+  --     { 'zbirenbaum/copilot.lua' }, -- or github/copilot.vim
+  --     { 'nvim-lua/plenary.nvim' }, -- for curl, log wrapper
+  --   },
+  --   opts = {
+  --     show_help = 'yes', -- Show help text for CopilotChatInPlace, default: yes
+  --     debug = false, -- Enable or disable debug mode, the log file will be in ~/.local/state/nvim/CopilotChat.nvim.log
+  --     disable_extra_info = 'no', -- Disable extra information (e.g: system prompt) in the response.
+  --     language = 'Chinese', -- Copilot answer language settings when using default prompts. Default language is English.
+  --     -- proxy = "socks5://127.0.0.1:3000", -- Proxies requests via https or socks.
+  --     -- temperature = 0.1,
+  --   },
+  --   build = function()
+  --     vim.cmd('UpdateRemotePlugins')
+  --     vim.notify("Please update the remote plugins by running ':UpdateRemotePlugins', then restart Neovim.")
+  --   end,
+  --   event = 'VeryLazy',
+  --   keys = {
+  --     { '<leader>ccc', ':CopilotChat ', desc = 'CopilotChat - Chat start' },
+  --     { '<leader>ccm', '<cmd>CopilotChat 是什么意思<cr>', desc = 'CopilotChat - code experimental' },
+  --     { '<leader>ccb', ':CopilotChatBuffer ', desc = 'CopilotChat - Chat with current buffer' },
+  --     { '<leader>cce', '<cmd>CopilotChatExplain<cr>', desc = 'CopilotChat - Explain code' },
+  --     { '<leader>cct', '<cmd>CopilotChatTests<cr>', desc = 'CopilotChat - Generate tests' },
+  --     {
+  --       '<leader>ccn',
+  --       '<cmd>CopilotChat 给这个变量命名<cr>',
+  --       desc = 'CopilotChat - Variable naming',
+  --     },
+  --     {
+  --       '<leader>ccd',
+  --       '<cmd>CopilotChat 给这段代码补全注释<cr>',
+  --       desc = 'CopilotChat - Variable naming',
+  --     },
+  --     {
+  --       '<leader>ccf',
+  --       '<cmd>CopilotChat 给这个方法命名<cr>',
+  --       desc = 'CopilotChat - Function naming',
+  --     },
+  --     {
+  --       '<leader>ccT',
+  --       '<cmd>CopilotChatVsplitToggle<cr>',
+  --       desc = 'CopilotChat - Toggle Vsplit', -- Toggle vertical split
+  --     },
+  --     {
+  --       '<leader>ccx',
+  --       ':CopilotChatInPlace<cr>',
+  --       mode = 'x',
+  --       desc = 'CopilotChat - Run in-place code',
+  --     },
+  --     {
+  --       '<leader>ccr',
+  --       '<cmd>CopilotChatReset<cr>', -- Reset chat history and clear buffer.
+  --       desc = 'CopilotChat - Reset chat history and clear buffer',
+  --     },
+  --   },
+  -- },
   -- auto completion
   {
     'hrsh7th/nvim-cmp',
