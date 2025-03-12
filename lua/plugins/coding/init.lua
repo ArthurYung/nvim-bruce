@@ -1,53 +1,61 @@
 return {
   -- snippets
-  {
-    'L3MON4D3/LuaSnip',
-    dependencies = {
-      'rafamadriz/friendly-snippets',
-      config = function()
-        require('luasnip.loaders.from_vscode').lazy_load()
-        require('luasnip.loaders.from_vscode').lazy_load({ paths = { vim.fn.stdpath('config') .. '/snippets' } })
-        require('luasnip').filetype_extend('typescript', { 'javascript' })
-        require('luasnip').filetype_extend('typescriptreact', { 'javascriptreact' })
-      end,
-    },
-    opts = {
-      history = true,
-      delete_check_events = 'TextChanged',
-    },
-    -- stylua: ignore
-    keys = {
-      {
-        '<tab>',
-        function()
-          return require('luasnip').jumpable(1) and '<Plug>luasnip-jump-next' or '<tab>'
-        end,
-        expr = true, silent = true, mode = 'i',
-      },
-      { '<tab>',   function() require('luasnip').jump(1) end,   mode = 's' },
-      { '<s-tab>', function() require('luasnip').jump( -1) end, mode = { 'i', 's' } },
-    },
-  },
+  -- {
+  --   'L3MON4D3/LuaSnip',
+  --   dependencies = {
+  --     'rafamadriz/friendly-snippets',
+  --     config = function()
+  --       require('luasnip.loaders.from_vscode').lazy_load()
+  --       require('luasnip.loaders.from_vscode').lazy_load({ paths = { vim.fn.stdpath('config') .. '/snippets' } })
+  --       require('luasnip').filetype_extend('typescript', { 'javascript' })
+  --       require('luasnip').filetype_extend('typescriptreact', { 'javascriptreact' })
+  --     end,
+  --   },
+  --   opts = {
+  --     history = true,
+  --     delete_check_events = 'TextChanged',
+  --   },
+  --   -- stylua: ignore
+  --   keys = {
+  --     {
+  --       '<tab>',
+  --       function()
+  --         return require('luasnip').jumpable(1) and '<Plug>luasnip-jump-next' or '<tab>'
+  --       end,
+  --       expr = true, silent = true, mode = 'i',
+  --     },
+  --     { '<tab>',   function() require('luasnip').jump(1) end,   mode = 's' },
+  --     { '<s-tab>', function() require('luasnip').jump( -1) end, mode = { 'i', 's' } },
+  --   },
+  -- },
   {
     'yetone/avante.nvim',
     event = 'VeryLazy',
     lazy = false,
     version = false, -- set this if you want to always pull the latest change
     opts = {
-      provider = 'openai',
-      auto_suggestions_provider = 'openai', -- Since auto-suggestions are a high-frequency operation and therefore expensive, it is recommended to specify an inexpensive provider or even a free provider: copilot
-      openai = {
-        endpoint = 'https://api.deepseek.com/v1',
-        model = 'deepseek-chat',
-        timeout = 30000, -- Timeout in milliseconds
-        temperature = 0,
-        max_tokens = 4096,
-        -- ['local'] = false,
-        api_key_name = 'DEEPSEEK_API_KEY',
+      provider = 'deepseek',
+      vendors = {
+        deepseek = {
+          __inherited_from = "openai",
+          api_key_name = "TEN_DEEPSEEK_API_KEY",
+          endpoint = "https://api.lkeap.cloud.tencent.com/v1",
+          model = "deepseek-v3",
+        },
       },
-      file_selector = {
-        provider = 'telescope',
-      },
+      -- auto_suggestions_provider = 'openai', -- Since auto-suggestions are a high-frequency operation and therefore expensive, it is recommended to specify an inexpensive provider or even a free provider: copilot
+      -- openai = {
+      --   endpoint = 'https://api.deepseek.com/v1',
+      --   model = 'deepseek-chat',
+      --   timeout = 30000, -- Timeout in milliseconds
+      --   temperature = 0,
+      --   max_tokens = 4096,
+      --   -- ['local'] = false,
+      --   api_key_name = 'DEEPSEEK_API_KEY',
+      -- },
+      -- file_selector = {
+      --   provider = 'telescope',
+      -- },
       --- @class AvanteConflictUserConfig
       diff = {
         autojump = true,
@@ -111,12 +119,12 @@ return {
       },
     },
   },
-  {
-    'zbirenbaum/copilot-cmp',
-    config = function()
-      require('copilot_cmp').setup()
-    end,
-  },
+  -- {
+  --   'zbirenbaum/copilot-cmp',
+  --   config = function()
+  --     require('copilot_cmp').setup()
+  --   end,
+  -- },
   -- {
   --   'CopilotC-Nvim/CopilotChat.nvim',
   --   branch = 'main',
@@ -178,75 +186,124 @@ return {
   -- },
   -- auto completion
   {
-    'hrsh7th/nvim-cmp',
-    version = false, -- last release is way too old
-    event = 'InsertEnter',
+    'saghen/blink.cmp',
     dependencies = {
-      'hrsh7th/cmp-nvim-lsp',
-      'hrsh7th/cmp-buffer',
-      'hrsh7th/cmp-path',
-      'saadparwaiz1/cmp_luasnip',
-      -- lspkind
-      'onsails/lspkind-nvim',
-    },
-    opts = function()
-      local cmp = require('cmp')
-      local lspkind = require('lspkind')
+      -- 'rafamariz/friendly-snippets',
+      'fang2hou/blink-copilot',
 
-      return {
-        completion = {
-          completeopt = 'menu,menuone,noinsert',
-        },
-        snippet = {
-          expand = function(args)
-            require('luasnip').lsp_expand(args.body)
-          end,
-        },
-        mapping = cmp.mapping.preset.insert({
-          ['<C-n>'] = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Insert }),
-          ['<C-p>'] = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Insert }),
-          ['<C-b>'] = cmp.mapping.scroll_docs(-4),
-          ['<C-f>'] = cmp.mapping.scroll_docs(4),
-          ['<C-Space>'] = cmp.mapping.complete(),
-          ['<C-e>'] = cmp.mapping.abort(),
-          ['<CR>'] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
-        }),
-        sources = cmp.config.sources({
-          {
-            name = 'copilot',
-            group_index = 1,
-            priority = 100,
-          },
-          { name = 'nvim_lsp', max_item_count = 20 },
-          { name = 'luasnip' },
-          { name = 'buffer' },
-          { name = 'path' },
-        }),
-        formatting = {
-          fields = { 'menu', 'abbr', 'kind' },
-          format = lspkind.cmp_format({
-            with_text = true,
-            maxwidth = 50,
-            menu = {
-              nvim_lsp = 'Lsp',
-              luasnip = 'Snip',
-              buffer = 'Buf',
-              path = 'Path',
+
+
+      'onsails/lspkind-nvim',
+      'nvim-web-devicons',
+    },
+    version = '*',
+    ---@module 'blink.cmp'
+    ---@type blink.cmp.Config
+    opts = {
+      completion = {
+        menu = {
+          draw = {
+            gap = 2,
+            components = {
+              kind_icon = {
+                ellipsis = false,
+                text = function(ctx)
+                  local lspkind = require('lspkind')
+                  lspkind.init({
+                    symbol_map = {
+                      Copilot = '',
+                    },
+                  })
+
+                  local icon = ctx.kind_icon
+                  if vim.tbl_contains({ 'Path' }, ctx.source_name) then
+                    local dev_icon, _ = require('nvim-web-devicons').get_icon(ctx.label)
+                    if dev_icon then
+                      icon = dev_icon
+                    end
+                  else
+                    icon = lspkind.symbolic(ctx.kind, {
+                      mode = 'symbol',
+                    })
+                  end
+
+                  return icon .. ctx.icon_gap
+                end,
+
+                -- Optionally, use the highlight groups from nvim-web-devicons
+                -- You can also add the same function for `kind.highlight` if you want to
+                -- keep the highlight groups in sync with the icons.
+                highlight = function(ctx)
+                  local hl = ctx.kind_hl
+                  if vim.tbl_contains({ 'Path' }, ctx.source_name) then
+                    local dev_icon, dev_hl = require('nvim-web-devicons').get_icon(ctx.label)
+                    if dev_icon then
+                      hl = dev_hl
+                    end
+                  end
+                  return hl
+                end,
+              },
             },
-            before = function(entry, vim_item)
-              vim_item.menu = '[' .. string.upper(entry.source.name) .. ']'
-              return vim_item
-            end,
-          }),
+
+            -- columns = { { 'kind_icon' }, { 'label', 'label_description', gap = 1 } },
+            -- nvim-cmp style menu
+            columns = {
+              { 'label', 'label_description', gap = 1 },
+              { 'kind_icon', 'kind', gap = 1 },
+            },
+          },
         },
-        experimental = {
-          ghost_text = false,
-          -- ghost_text = {
-          --   hl_group = 'LspCodeLens',
-          -- },
+      },
+
+      -- 'default' (recommended) for mappings similar to built-in completions (C-y to accept, C-n/C-p for up/down)
+      -- 'super-tab' for mappings similar to vscode (tab to accept, arrow keys for up/down)
+      -- 'enter' for mappings similar to 'super-tab' but with 'enter' to accept
+      --
+      -- All presets have the following mappings:
+      -- C-space: Open menu or open docs if already open
+      -- C-e: Hide menu
+      -- C-k: Toggle signature help
+      --
+      -- See the full "keymap" documentation for information on defining your own keymap.
+      keymap = {
+        preset = 'enter',
+      },
+
+      appearance = {
+        -- Sets the fallback highlight groups to nvim-cmp's highlight groups
+        -- Useful for when your theme doesn't support blink.cmp
+        -- Will be removed in a future release
+        use_nvim_cmp_as_default = true,
+        -- Set to 'mono' for 'Nerd Font Mono' or 'normal' for 'Nerd Font'
+        -- Adjusts spacing to ensure icons are aligned
+        nerd_font_variant = 'mono',
+      },
+
+      -- Default list of enabled providers defined so that you can extend it
+      -- elsewhere in your config, without redefining it, due to `opts_extend`
+      sources = {
+        default = { 'copilot', 'lsp', 'path', 'snippets', 'buffer' },
+
+        providers = {
+          copilot = {
+            name = 'copilot',
+            module = 'blink-copilot',
+            score_offset = 100,
+            async = true,
+          },
+
         },
-      }
-    end,
+      },
+
+      -- Blink.cmp uses a Rust fuzzy matcher by default for typo resistance and significantly better performance
+      -- You may use a lua implementation instead by using `implementation = "lua"` or fallback to the lua implementation,
+      -- when the Rust fuzzy matcher is not available, by using `implementation = "prefer_rust"`
+      --
+      -- See the fuzzy documentation for more information
+      fuzzy = { implementation = 'prefer_rust_with_warning' },
+    },
+    opts_extend = { 'sources.default' },
   },
 
   -- auto pairs
@@ -358,5 +415,17 @@ return {
         },
       }
     end,
+  },
+  {
+    'ojroques/nvim-osc52',
+    config = function()
+      require('osc52').setup({})
+    end,
+  },
+  {
+    'fedepujol/move.nvim',
+    opts = {
+      --- Config
+    },
   },
 }

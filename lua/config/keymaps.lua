@@ -1,14 +1,14 @@
 -- This file is automatically loaded by lazyvim.config.init
 local copilot_panel = require('copilot.panel')
-
 local function map(mode, lhs, rhs, opts)
   local keys = require('lazy.core.handler').handlers.keys
+
   ---@cast keys LazyKeysHandler
   -- do not create the keymap if a lazy keys handler exists
   if not keys.active[keys.parse({ lhs, mode = mode }).id] then
     opts = opts or {}
-    opts.silent = opts.silent ~= false
     vim.keymap.set(mode, lhs, rhs, opts)
+    opts.silent = opts.silent ~= false
   end
 end
 
@@ -47,13 +47,22 @@ local diagnostic_goto = function(next, severity)
 end
 
 -- toggle options
-map("n", "<leader>uf", Editor.format.toggle, { desc = "Toggle format on Save" })
-map("n", "<leader>us", function() Editor.toggle("spell") end, { desc = "Toggle Spelling" })
-map("n", "<leader>uw", function() Editor.toggle("wrap") end, { desc = "Toggle Word Wrap" })
-map("n", "<leader>ul", function() Editor.toggle("relativenumber", true) Editor.toggle("number") end, { desc = "Toggle Line Numbers" })
-map("n", "<leader>ud", Editor.toggle_diagnostics, { desc = "Toggle Diagnostics" })
+map('n', '<leader>uf', Editor.format.toggle, { desc = 'Toggle format on Save' })
+map('n', '<leader>us', function()
+  Editor.toggle('spell')
+end, { desc = 'Toggle Spelling' })
+map('n', '<leader>uw', function()
+  Editor.toggle('wrap')
+end, { desc = 'Toggle Word Wrap' })
+map('n', '<leader>ul', function()
+  Editor.toggle('relativenumber', true)
+  Editor.toggle('number')
+end, { desc = 'Toggle Line Numbers' })
+map('n', '<leader>ud', Editor.toggle_diagnostics, { desc = 'Toggle Diagnostics' })
 local conceallevel = vim.o.conceallevel > 0 and vim.o.conceallevel or 3
-map("n", "<leader>uc", function() Editor.toggle("conceallevel", false, {0, conceallevel}) end, { desc = "Toggle Conceal" })
+map('n', '<leader>uc', function()
+  Editor.toggle('conceallevel', false, { 0, conceallevel })
+end, { desc = 'Toggle Conceal' })
 
 map({ 'i', 'x', 'n', 's' }, '<C-s>', '<cmd>w<cr><esc>', { desc = 'Save file' })
 map('n', '<leader>cd', vim.diagnostic.open_float, { desc = 'Line Diagnostics' })
@@ -63,3 +72,14 @@ map('n', ']e', diagnostic_goto(true, 'ERROR'), { desc = 'Next Error' })
 map('n', '[e', diagnostic_goto(false, 'ERROR'), { desc = 'Prev Error' })
 map('n', ']w', diagnostic_goto(true, 'WARN'), { desc = 'Next Warning' })
 map('n', '[w', diagnostic_goto(false, 'WARN'), { desc = 'Prev Warning' })
+
+local opts = { noremap = true, silent = true }
+
+map('n', '<A-j>', '<cmd>MoveLine(1)<cr>', opts)
+map('n', '<A-k>', '<cmd>MoveLine(-1)<cr>', opts)
+
+map('n', '<A-h>', '<cmd>MoveHChar(-1)<cr>', opts)
+map('n', '<A-l>', '<cmd>MoveHChar(1)<cr>', opts)
+
+map('v', '<A-j>', ':MoveBlock(1)<cr>', opts)
+map('v', '<A-k>', ':MoveBlock(-1)<cr>', opts)

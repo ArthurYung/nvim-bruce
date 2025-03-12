@@ -6,7 +6,7 @@ return {
     dependencies = {
       'mason.nvim',
       'williamboman/mason-lspconfig.nvim',
-      'hrsh7th/cmp-nvim-lsp',
+      -- 'hrsh7th/cmp-nvim-lsp',
       'simrat39/rust-tools.nvim',
       'jose-elias-alvarez/typescript.nvim',
     },
@@ -75,6 +75,9 @@ return {
         -- pyright = {},
         bashls = {},
         yamlls = {},
+        gopls = {
+          version = '0.17.1'
+        },
       },
 
       setup = {},
@@ -190,7 +193,11 @@ return {
             if server_opts.mason == false or not vim.tbl_contains(all_mslp_servers, server) then
               setup(server)
             else
-              ensure_installed[#ensure_installed + 1] = server
+              local server_identifier = server
+              if server_opts.version then
+                server_identifier = server .. '@' .. server_opts.version
+              end
+              ensure_installed[#ensure_installed + 1] = server_identifier
             end
           end
         end
@@ -239,6 +246,7 @@ return {
         'goimports',
         'goimports-reviser',
         'eslint_d',
+        'gopls'
       },
     },
     ---@param opts MasonSettings | {ensure_installed: string[]}
