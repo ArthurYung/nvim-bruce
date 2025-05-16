@@ -1,33 +1,6 @@
+local vim = vim
+
 return {
-  -- snippets
-  -- {
-  --   'L3MON4D3/LuaSnip',
-  --   dependencies = {
-  --     'rafamadriz/friendly-snippets',
-  --     config = function()
-  --       require('luasnip.loaders.from_vscode').lazy_load()
-  --       require('luasnip.loaders.from_vscode').lazy_load({ paths = { vim.fn.stdpath('config') .. '/snippets' } })
-  --       require('luasnip').filetype_extend('typescript', { 'javascript' })
-  --       require('luasnip').filetype_extend('typescriptreact', { 'javascriptreact' })
-  --     end,
-  --   },
-  --   opts = {
-  --     history = true,
-  --     delete_check_events = 'TextChanged',
-  --   },
-  --   -- stylua: ignore
-  --   keys = {
-  --     {
-  --       '<tab>',
-  --       function()
-  --         return require('luasnip').jumpable(1) and '<Plug>luasnip-jump-next' or '<tab>'
-  --       end,
-  --       expr = true, silent = true, mode = 'i',
-  --     },
-  --     { '<tab>',   function() require('luasnip').jump(1) end,   mode = 's' },
-  --     { '<s-tab>', function() require('luasnip').jump( -1) end, mode = { 'i', 's' } },
-  --   },
-  -- },
   {
     'yetone/avante.nvim',
     event = 'VeryLazy',
@@ -38,9 +11,13 @@ return {
       vendors = {
         deepseek = {
           __inherited_from = "openai",
-          api_key_name = "TEN_DEEPSEEK_API_KEY",
-          endpoint = "https://api.lkeap.cloud.tencent.com/v1",
-          model = "deepseek-v3",
+          -- api_key_name = "TEN_DEEPSEEK_API_KEY",
+          -- endpoint = "https://api.lkeap.cloud.tencent.com/v1",
+          -- model = "deepseek-v3",
+          api_key_name = "DEEPSEEK_API_KEY",
+          endpoint = "https://api.deepseek.com",
+          model = "deepseek-chat",
+          max_tokens = 8192,
         },
       },
       -- auto_suggestions_provider = 'openai', -- Since auto-suggestions are a high-frequency operation and therefore expensive, it is recommended to specify an inexpensive provider or even a free provider: copilot
@@ -68,7 +45,7 @@ return {
       },
     },
     -- if you want to build from source then do `make BUILD_FROM_SOURCE=true`
-    build = 'make BUILD_FROM_SOURCE=true',
+    build = 'make',
     -- build = "powershell -ExecutionPolicy Bypass -File Build.ps1 -BuildFromSource false" -- for windows
     dependencies = {
       'nvim-treesitter/nvim-treesitter',
@@ -117,73 +94,8 @@ return {
         markdown = true,
         help = true,
       },
-    },
   },
-  -- {
-  --   'zbirenbaum/copilot-cmp',
-  --   config = function()
-  --     require('copilot_cmp').setup()
-  --   end,
-  -- },
-  -- {
-  --   'CopilotC-Nvim/CopilotChat.nvim',
-  --   branch = 'main',
-  --   dependencies = {
-  --     { 'zbirenbaum/copilot.lua' }, -- or github/copilot.vim
-  --     { 'nvim-lua/plenary.nvim' }, -- for curl, log wrapper
-  --   },
-  --   opts = {
-  --     show_help = 'yes', -- Show help text for CopilotChatInPlace, default: yes
-  --     debug = false, -- Enable or disable debug mode, the log file will be in ~/.local/state/nvim/CopilotChat.nvim.log
-  --     disable_extra_info = 'no', -- Disable extra information (e.g: system prompt) in the response.
-  --     language = 'Chinese', -- Copilot answer language settings when using default prompts. Default language is English.
-  --     -- proxy = "socks5://127.0.0.1:3000", -- Proxies requests via https or socks.
-  --     -- temperature = 0.1,
-  --   },
-  --   build = function()
-  --     vim.cmd('UpdateRemotePlugins')
-  --     vim.notify("Please update the remote plugins by running ':UpdateRemotePlugins', then restart Neovim.")
-  --   end,
-  --   event = 'VeryLazy',
-  --   keys = {
-  --     { '<leader>ccc', ':CopilotChat ', desc = 'CopilotChat - Chat start' },
-  --     { '<leader>ccm', '<cmd>CopilotChat 是什么意思<cr>', desc = 'CopilotChat - code experimental' },
-  --     { '<leader>ccb', ':CopilotChatBuffer ', desc = 'CopilotChat - Chat with current buffer' },
-  --     { '<leader>cce', '<cmd>CopilotChatExplain<cr>', desc = 'CopilotChat - Explain code' },
-  --     { '<leader>cct', '<cmd>CopilotChatTests<cr>', desc = 'CopilotChat - Generate tests' },
-  --     {
-  --       '<leader>ccn',
-  --       '<cmd>CopilotChat 给这个变量命名<cr>',
-  --       desc = 'CopilotChat - Variable naming',
-  --     },
-  --     {
-  --       '<leader>ccd',
-  --       '<cmd>CopilotChat 给这段代码补全注释<cr>',
-  --       desc = 'CopilotChat - Variable naming',
-  --     },
-  --     {
-  --       '<leader>ccf',
-  --       '<cmd>CopilotChat 给这个方法命名<cr>',
-  --       desc = 'CopilotChat - Function naming',
-  --     },
-  --     {
-  --       '<leader>ccT',
-  --       '<cmd>CopilotChatVsplitToggle<cr>',
-  --       desc = 'CopilotChat - Toggle Vsplit', -- Toggle vertical split
-  --     },
-  --     {
-  --       '<leader>ccx',
-  --       ':CopilotChatInPlace<cr>',
-  --       mode = 'x',
-  --       desc = 'CopilotChat - Run in-place code',
-  --     },
-  --     {
-  --       '<leader>ccr',
-  --       '<cmd>CopilotChatReset<cr>', -- Reset chat history and clear buffer.
-  --       desc = 'CopilotChat - Reset chat history and clear buffer',
-  --     },
-  --   },
-  -- },
+},
   -- auto completion
   {
     'saghen/blink.cmp',
@@ -197,8 +109,7 @@ return {
       'nvim-web-devicons',
     },
     version = '*',
-    ---@module 'blink.cmp'
-    ---@type blink.cmp.Config
+      ---@module 'blink.cmp'
     opts = {
       completion = {
         menu = {

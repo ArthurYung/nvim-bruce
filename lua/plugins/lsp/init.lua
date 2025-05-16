@@ -1,4 +1,47 @@
-return {
+return { -- cmdline tools and lsp servers
+  {
+    'williamboman/mason.nvim',
+    cmd = 'Mason',
+    keys = { { '<leader>cm', '<cmd>Mason<cr>', desc = 'Mason' } },
+    opts_extend = { 'ensure_installed' },
+    opts = {
+      ensure_installed = {
+        'stylua',
+        'shellcheck',
+        'shfmt',
+        'flake8',
+        'codelldb',
+        'cspell',
+        'clang-format',
+        'gofumpt',
+        'goimports',
+        'goimports-reviser',
+        'lua-language-server',  -- 注意这里使用 mason 的包名
+        'eslint_d',
+        'gopls'
+      },
+    },
+    ---@param opts MasonSettings | {ensure_installed: string[]}
+    config = function(plugin, opts)
+      require('mason').setup(opts)
+      vim.schedule(function()
+        local mr = require('mason-registry')
+        for _, tool in ipairs(opts.ensure_installed) do
+          local p = mr.get_package(tool)
+          if not p:is_installed() then
+            p:install()
+          end
+        end
+      end)
+      -- local mr = require('mason-registry')
+      -- for _, tool in ipairs(opts.ensure_installed) do
+      --   local p = mr.get_package(tool)
+      --   if not p:is_installed() then
+      --     p:install()
+      --   end
+      -- end
+    end,
+  },
   -- lspconfig
   {
     'neovim/nvim-lspconfig',
@@ -179,10 +222,19 @@ return {
 
       -- get all the servers that are available through mason-lspconfig
       local have_mason, mlsp = pcall(require, 'mason-lspconfig')
-      local all_mslp_servers = {}
-      if have_mason then
-        all_mslp_servers = vim.tbl_keys(require('mason-lspconfig.mappings.server').lspconfig_to_package)
-      end
+      local all_mslp_servers = have_mason and mlsp.get_available_servers() or {}
+      -- -- if have_mason then
+      -- --   all_mslp_servers = vim.tbl_keys(require('mason-lspconfig.mappings.server').lspconfig_to_package)
+      -- -- end
+      -- if have_mason then
+      --   -- 方法1：优先使用官方推荐的新API
+      --   if pcall(require, 'mason-lspconfig.mappings') then
+      --     all_mslp_servers = vim.tbl_keys(require('mason-lspconfig.mappings').lspconfig_to_package)
+      --   else
+      --     -- 方法2：兼容旧版本
+      --     all_mslp_servers = mlsp.get_available_servers()
+      --   end
+      -- end
 
       local ensure_installed = {} ---@type string[]
       for server, server_opts in pairs(servers) do
@@ -227,38 +279,5 @@ return {
     end,
   },
 
-  -- cmdline tools and lsp servers
-  {
-    'williamboman/mason.nvim',
-    cmd = 'Mason',
-    keys = { { '<leader>cm', '<cmd>Mason<cr>', desc = 'Mason' } },
-    opts_extend = { 'ensure_installed' },
-    opts = {
-      ensure_installed = {
-        'stylua',
-        'shellcheck',
-        'shfmt',
-        'flake8',
-        'codelldb',
-        'cspell',
-        'clang-format',
-        'gofumpt',
-        'goimports',
-        'goimports-reviser',
-        'eslint_d',
-        'gopls'
-      },
-    },
-    ---@param opts MasonSettings | {ensure_installed: string[]}
-    config = function(plugin, opts)
-      require('mason').setup(opts)
-      local mr = require('mason-registry')
-      for _, tool in ipairs(opts.ensure_installed) do
-        local p = mr.get_package(tool)
-        if not p:is_installed() then
-          p:install()
-        end
-      end
-    end,
-  },
+ 
 }
