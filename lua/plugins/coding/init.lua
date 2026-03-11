@@ -20,7 +20,7 @@ return {
           max_tokens = 8192,
         },
       },
-      -- auto_suggestions_provider = 'openai', -- Since auto-suggestions are a high-frequency operation and therefore expensive, it is recommended to specify an inexpensive provider or even a free provider: copilot
+      -- auto_suggestions_provider = 'openai', -- Since auto-suggestions are a high-frequency operation and therefore expensive, it is recommended to specify an inexpensive provider
       -- openai = {
       --   endpoint = 'https://api.deepseek.com/v1',
       --   model = 'deepseek-chat',
@@ -54,7 +54,6 @@ return {
       'MunifTanjim/nui.nvim',
       --- The below dependencies are optional,
       'nvim-tree/nvim-web-devicons', -- or echasnovski/mini.icons
-      'zbirenbaum/copilot.lua', -- for providers='copilot'
       {
         -- support for image pasting
         'HakonHarnes/img-clip.nvim',
@@ -82,26 +81,11 @@ return {
       },
     },
   },
-  -- copilot
-  {
-    'zbirenbaum/copilot.lua',
-    cmd = 'Copilot',
-    build = ':Copilot auth',
-    opts = {
-      suggestion = { enabled = false },
-      panel = { enabled = false },
-      filetypes = {
-        markdown = true,
-        help = true,
-      },
-  },
-},
   -- auto completion
   {
     'saghen/blink.cmp',
     dependencies = {
       -- 'rafamariz/friendly-snippets',
-      'fang2hou/blink-copilot',
 
 
 
@@ -122,7 +106,6 @@ return {
                   local lspkind = require('lspkind')
                   lspkind.init({
                     symbol_map = {
-                      Copilot = '',
                     },
                   })
 
@@ -194,15 +177,9 @@ return {
       -- Default list of enabled providers defined so that you can extend it
       -- elsewhere in your config, without redefining it, due to `opts_extend`
       sources = {
-        default = { 'copilot', 'lsp', 'path', 'snippets', 'buffer' },
+        default = { 'lsp', 'path', 'snippets', 'buffer' },
 
         providers = {
-          copilot = {
-            name = 'copilot',
-            module = 'blink-copilot',
-            score_offset = 100,
-            async = true,
-          },
 
         },
       },

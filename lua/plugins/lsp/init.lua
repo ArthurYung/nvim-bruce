@@ -28,7 +28,7 @@ return { -- cmdline tools and lsp servers
         local mr = require('mason-registry')
         for _, tool in ipairs(opts.ensure_installed) do
           local p = mr.get_package(tool)
-          if not p:is_installed() then
+          if not p:is_installed() and not p:is_installing() then
             p:install()
           end
         end
@@ -189,13 +189,13 @@ return { -- cmdline tools and lsp servers
       vim.diagnostic.config(vim.deepcopy(opts.diagnostics))
 
       local servers = opts.servers
-      local has_cmp, cmp_nvim_lsp = pcall(require, 'cmp_nvim_lsp')
+      -- local has_cmp, cmp_nvim_lsp = pcall(require, 'cmp_nvim_lsp')
       local has_blink, blink = pcall(require, 'blink.cmp')
       local capabilities = vim.tbl_deep_extend(
         'force',
         {},
         vim.lsp.protocol.make_client_capabilities(),
-        has_cmp and cmp_nvim_lsp.default_capabilities() or {},
+        -- has_cmp and cmp_nvim_lsp.default_capabilities() or {},
         has_blink and blink.get_lsp_capabilities() or {},
         opts.capabilities or {}
       )

@@ -39,7 +39,6 @@ local defaults = {
       Collapsed = ' ',
       Constant = '󰏿 ',
       Constructor = ' ',
-      Copilot = ' ',
       Enum = ' ',
       EnumMember = ' ',
       Event = ' ',
